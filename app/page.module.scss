@@ -1,0 +1,144 @@
+.mainBody {
+  background: white;
+}
+.container {
+  width: 80%;
+  height: 100vh;
+  margin-left: 10%;
+  border: 2px solid blue;
+}
+
+.mailing {
+  width: 70%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  background: rgb(187, 126, 126);
+}
+
+.Element {
+  display: flex;
+  padding: 0 0 0 9px;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  height: auto;
+  font-size: 22px;
+  width: 37%;
+  border: 1px solid red;
+}
+.numberElement {
+  display: flex;
+  padding: 0 0 0 9px;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  height: auto;
+  font-size: 22px;
+  width: 10%;
+  border: 1px solid red;
+}
+.sendBack {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  margin-left: 30%;
+
+}
+.submitButton {
+  margin-left: 34%;
+}
+
+.button {
+  
+  margin: 0px; 
+  width: 4em;
+  height: 4em; 
+  opacity: 0;
+}
+.redactor {
+     height: 1.9em;
+     width: 7%;
+
+     margin: 8px 5px 5px 3px;
+     background-image: url('./pics/pencil.png');
+     background-size: contain; 
+     background-repeat: no-repeat; 
+     background-position: center;
+}
+.adder {
+  background-image: url('./pics/plus.png');
+}
+.pagination {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  margin: 10px 30%;
+  width: 16%;
+  height: 8%;
+  
+}
+.letter {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  
+  margin: 45%;
+  margin-top: 15px;
+  width: 190px;
+}
+.left {
+  height: 30px;
+  width: 30px;
+  background-image: url('./pics/left.png');
+  background-size: contain; 
+  background-repeat: no-repeat; 
+  background-position: center;
+}
+.right {
+  background-image: url('./pics/right.png');
+}
+.delete {
+  background-image: url('./pics/trash.png');
+}
+
+
+.generalBlock {
+  background: rgb(147, 171, 147);
+  width: 90%;
+  
+  height: 80%;
+  padding: 2% 5%;
+}
+
+.inputWrapper {
+  width: 40%;
+  height: 5%;
+  margin: 0px 20% 20px;
+  padding: 1%;
+  background: white;
+  
+  border: 2px solid rgba(0, 0, 0, 0.2);
+   
+}
+.inputInput {
+  width: 90%;
+  height: 100%;
+  border: none;
+  outline: none; 
+  padding-left: 10px;
+  margin: 0 1px;
+  margin-left: 0;
+  
+}
+
+@media all and (max-width: 900px) {
+    .container {
+      width: 100%;
+      margin-left: 0;
+    }
+    .mailing {
+      width: 99%;
+    }
+}
