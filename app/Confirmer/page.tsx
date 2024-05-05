@@ -1,10 +1,18 @@
 'use client';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { deleteMailing } from '../lib/fetchers'
+import { Suspense } from 'react';
 import { useEffect } from 'react';
 import { redirect } from 'next/navigation';
+export default function ConfirmWrapper() {
+    return (
+        <Suspense>
+            <Confirmer />
+        </Suspense>
+    )
+}
 
-export default function Confirmer() {
+ function Confirmer() {
     const searchparams = useSearchParams();
         const params = new URLSearchParams(searchparams);
         const item = params.get('item') as string;
