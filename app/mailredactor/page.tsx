@@ -1,15 +1,24 @@
 'use client';
 
 import styles from '../page.module.scss';
+import Skeleton from '../Skeleton';
 import { MailingsPush } from '../lib/fetchers';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 
 
-
 export default function MailRedactor() {
+          return(
+            <Suspense fallback={<Skeleton/>}>
+                <MaiilRedactor />
+            </Suspense>
+          )
+}
+
+function MaiilRedactor() {
     const searchparams = useSearchParams();
     const params = new URLSearchParams(searchparams);
     const initialObj = {item: params.get('item') as string,

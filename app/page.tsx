@@ -2,6 +2,8 @@
 import MailingList from './MailingList';
 import Search from './Search';
 import Pagination from './Pagination';
+import {Suspense} from 'react';
+import Skeleton from './Skeleton';
 import { fetchMailingsPages } from './lib/fetchers';
 
 
@@ -20,7 +22,9 @@ export default async function Page({
     return (
         <>
             <Search />
-            <MailingList query={query} currentPage={currentPage} />
+            <Suspense fallback={<Skeleton />}>
+              <MailingList query={query} currentPage={currentPage} />
+            </Suspense>
             <Pagination totalPages={totalPages}/>
         </>
     )

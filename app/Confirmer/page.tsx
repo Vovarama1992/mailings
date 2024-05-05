@@ -2,11 +2,12 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { deleteMailing } from '../lib/fetchers'
 import { Suspense } from 'react';
+import Skeleton from '../Search';
 import { useEffect } from 'react';
 import { redirect } from 'next/navigation';
 export default function ConfirmWrapper() {
     return (
-        <Suspense>
+        <Suspense fallback={<Skeleton />}>
             <Confirmer />
         </Suspense>
     )
