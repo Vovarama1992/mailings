@@ -76,8 +76,9 @@ function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                <input type='number' onChange={(e) => onInput(e.target.value, 'number')} name='number' value={obj.number} placeholder='number' className={styles.inputInput}></input> 
                </div>
                <div className={styles.sendBack}>
-                   <Link href='/'><button>Back</button></Link>
+                   <Link href={'/'}><button>Back</button></Link>
                    <button type='submit'  >Send Changes</button>
+                   <Link href={`/?item=${obj.item}&date=${obj.date}&num=${obj.number}&showGifts=true`}><button>Show gifts</button></Link>
                    
                    
                </div>

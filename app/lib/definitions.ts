@@ -6,6 +6,11 @@ export type Mailings = {
     date: string;
     number: number | string;
 }
+export type Gift = {
+  name: string;
+  expiry_date: string;
+  price: number;
+}
 export type OnlyEssential = Omit<Mailings, 'id'>;
 export type MailingProps = {
     id: string;
