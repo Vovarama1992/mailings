@@ -1,10 +1,16 @@
 'use client';
 import styles from './page.module.scss';
+import Link from 'next/link';
 import { useState } from 'react';
-export default function Gift({item, price, date } : {item: string, price: number, date: string}) {
+export default function Gift({item, price, date, commonItem } : {item: string, price: number, date: string, commonItem: string}) {
     const [isVisible, setIsVisible] = useState(false);
-    const [switcher, setSwitcher] = useState(true);
+    
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  
+  const indexToDelete = findIndexToDelete(item);
+
+ 
+ 
 
   const showPopup = (event: any, kind: boolean) => {
     
@@ -20,7 +26,7 @@ export default function Gift({item, price, date } : {item: string, price: number
     return (
         <div>
       <div onMouseOver={(e) => showPopup(e, true)} onMouseOut={(e) => showPopup(e, false)} className={styles.item}>
-        {item}
+        {item}<Link href={`/GiftDeleteConfirmer?item=${commonItem}&number=${indexToDelete}&date=${date}`}>x</Link>
       </div>
       {isVisible && (
         <div
@@ -44,4 +50,13 @@ export default function Gift({item, price, date } : {item: string, price: number
       )}
     </div>
     )
+}
+
+function findIndexToDelete(str: string) {
+  for (let i = 0; i < str.length; i++) {
+    if (/\d/.test(str[i])) {
+      return Number(str.substring(i)) - 1;
+    }
+  }
+  return 0;
 }

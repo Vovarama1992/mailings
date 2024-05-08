@@ -57,29 +57,13 @@ export async function seedGifts(word: string, num: string, date: string) {
           await Promise.all(insertPromises);
 
 }
-export async function fetchGifts(gift: string) {
-     try {
-      const data = await sql<Gift>`
-      SELECT name, price, expiry_date from ${gift}
-      `
-      const gifts = data.rows.map(row => ({
-        item: row.name,
-        price: row.price,
-        expiryDate: row.expiry_date,
-      }));
-      return gifts;
-     }
-     catch (error) {
-      console.error('Ошибка при извлечении gifts:', error);
-      throw error;
-    }
-}
+
 
 export async function fetchFilteredMailings(query: string, page: number) {
   try {
     const offset = (page - 1) * ITEMS_PER_PAGE;
     const data = await sql<Mailings>`
-      SELECT name, date, number FROM mailings
+      SELECT name, date, number FROM jsoned_mailings
       WHERE name ILIKE ${`%${query}%`}
       OR date::text ILIKE ${`%${query}%`}
       OR number::text ILIKE ${`%${query}%`}
@@ -90,7 +74,7 @@ export async function fetchFilteredMailings(query: string, page: number) {
     const mailings = data.rows.map(row => ({
       id: row.id,
       item: row.name,
-      date: row.date,
+      date: formater(row.date),
       number: row.number
     }));
 
@@ -100,13 +84,52 @@ export async function fetchFilteredMailings(query: string, page: number) {
     throw error;
   }
 }
+export async function fetchJson(item: string)  {
+  if (item == "Home") {
+    item = 'Home & Garden Gazette';
+  }
+  const data = await sql`
+      SELECT gifts FROM jsoned_mailings
+      WHERE NAME = ${item}
+  `;
+  const row = data.rows[0];
+  const values = Object.values(row);
+  return values[0];
+  
+}
+
+export async function remove(formData: FormData) {
+  const item = formData.get('item') as string;
+  const index = formData.get("number") as string;
+  const date = formData.get('date') as string;
+  const indexNum = Number(index) + 1;
+  try {
+    const obj = await sql`
+      SELECT gifts FROM jsoned_mailings WHERE name = ${item}
+    `;
+    const giftArray: [string, string, number][] = obj.rows[0].gifts;
+    const newGiftsArray = giftArray.filter((ar, i) => i !== Number(index));
+    const json = JSON.stringify(newGiftsArray);
+    await sql`
+      UPDATE jsoned_mailings
+      SET gifts = ${json}
+      WHERE name = ${item}
+    `;
+    console.log(`Element at index ${index} removed from ${item}.`);
+  } catch (error) {
+    console.error('Error removing element:', error);
+  }
+    revalidatePath('/');
+    redirect(`/?item=${item}&number=${indexNum}&date=${date}&showGifts=true`);
+    
+}
 
 
 export async function fetchMailingsPages(query: string) {
   try {
     const count = await sql`
       SELECT COUNT(*)
-      FROM mailings
+      FROM jsoned_mailings
       WHERE
         name ILIKE ${`%${query}%`} OR
         date::text ILIKE ${`%${query}%`} OR
@@ -130,19 +153,38 @@ export async function fetchMailingsPages(query: string) {
 
 async function sendMail(mail: OnlyEssential) {
   try {
-      await sql<Mailings>`
+      await sql`
           
-          INSERT INTO mailings (name, date, number)
-          VALUES (${mail.name}, ${mail.date}, ${mail.number})
-          ON CONFLICT (name) DO UPDATE
-          SET date = EXCLUDED.date, number = EXCLUDED.number;
+      INSERT INTO jsoned_mailings (name, date, number, gifts)
+      VALUES (${mail.name}, ${mail.date}, ${mail.number}, ${mail.gifts})
+      ON CONFLICT (name) DO UPDATE
+      SET date = EXCLUDED.date, number = EXCLUDED.number, gifts = EXCLUDED.gifts;
+          
       `;
-      console.log('Данные успешно вставлены в таблицу mailings');
+      console.log('Данные успешно вставлены в таблицу jsoned_mailings');
   } catch (error) {
-      console.error('Ошибка при вставке данных в таблицу mailings:', error);
+      console.error('Ошибка при вставке данных в таблицу jsoned_mailings:', error);
       throw error; 
   }
 }
+function randomDate(star: any, en: any) {
+  const start = new Date(star);
+  const end = new Date(en);
+  const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+  return new Date(randomTime).toISOString().split('T')[0];
+}
+
+
+function randomNum() {
+  return Math.floor(Math.random() * (50 - 5 + 1)) + 5;
+}
+
+function randomPrice() {
+  return Math.floor(Math.random() * 1000) + 1;
+}
+
+
+
 
 export async function MailingsPush(formData : FormData) {
   
@@ -150,10 +192,19 @@ export async function MailingsPush(formData : FormData) {
   const name = formData.get('item') as string;
   const date = formData.get('date') as string;
   const number = formData.get('number') as string;
+  console.log("Date is " + date);
+
+  const words = getRelatedWords(name, Number(number));
+  const extended_words = words.map(word => [word, randomDate("2024-05-12", date), randomPrice()]);
+  const json = JSON.stringify(extended_words);
+
+
+  
   const obj = {
     name: name,
     date: date,
     number: number,
+    gifts: json,
   }
   
           
@@ -168,11 +219,14 @@ export async function MailingsPush(formData : FormData) {
 
 
     export async function deleteMailing(formData: FormData) {
-      const value = formData.get('name') as string;
+      let value = formData.get('name') as string;
+      if (value == "Home") {
+        value = "Home & Garden Gazette";
+      }
       console.log("Call from the server");
       try {
-        await sql<Mailings>`
-        DELETE FROM mailings WHERE name = ${value};
+        await sql`
+        DELETE FROM jsoned_mailings WHERE name = ${value};
         `;
         console.log("Successful remove");
       }
@@ -183,6 +237,10 @@ export async function MailingsPush(formData : FormData) {
     revalidatePath('/');
     redirect('/');
     
+  }
+
+  function formater(date: any) {
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
   }
 
 

@@ -2,14 +2,13 @@
 import styles from './page.module.scss';
 import Link from 'next/link';
 import Gift from './Gift';
-import { createGiftTable, seedGifts, fetchGifts } from './lib/fetchers';
+import { fetchJson } from './lib/fetchers';
 export default async function GiftList({item, num, date}: {item: string, num: string, date: string}) {
-    const gifts = getRelatedWords(item, Number(num));
-    const fullGifts = priceDater(gifts, date);
+    const gifts = await fetchJson(item);
     return (
         <><div className={styles.giftWrapper}>
-            {fullGifts.map((fullGift, index) => (
-                <Gift key={index} item={fullGift[0]} date={fullGift[1]}  price={fullGift[2]}/>
+            {gifts.map((gift: [string, string, number], index: number) => (
+                <Gift key={index} commonItem={item} item={gift[0]} date={gift[1]}  price={gift[2]}/>
             ))}
             
 

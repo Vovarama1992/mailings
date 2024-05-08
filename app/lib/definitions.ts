@@ -5,6 +5,7 @@ export type Mailings = {
     name: string;
     date: string;
     number: number | string;
+    gifts: string;
 }
 export type Gift = {
   name: string;

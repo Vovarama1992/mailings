@@ -3,7 +3,7 @@ import { deleteMailing } from '../lib/fetchers';
 import styles from '../page.module.scss';
 import { MailingProps } from '../lib/definitions';
 export default function Mailing({ id, item, date, number } : MailingProps) {
-
+const fixedItem = encodeURIComponent(item);
     
     return (
         <div className={styles.mailing} id={id}>
@@ -11,7 +11,7 @@ export default function Mailing({ id, item, date, number } : MailingProps) {
             <div className={styles.Element}>{date}</div>
             <div className={styles.numberElement}>{number}</div>
             <div className={styles.redactor}>
-                <Link href={`/mailredactor?item=${item}&date=${date}&number=${number}`}><button className={styles.button}></button></Link>
+                <Link href={`/mailredactor?item=${fixedItem}&date=${date}&number=${number}`}><button className={styles.button}></button></Link>
             </div>
             <div className={`${styles.redactor} ${styles.delete}`}>
                 <form action={deleteMailing} >
