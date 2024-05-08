@@ -18,6 +18,7 @@ export type MailingProps = {
     item: string;
     date: string;
     number: string | number;
+    query: string;
 }
 
 

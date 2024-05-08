@@ -85,9 +85,7 @@ export async function fetchFilteredMailings(query: string, page: number) {
   }
 }
 export async function fetchJson(item: string)  {
-  if (item == "Home") {
-    item = 'Home & Garden Gazette';
-  }
+  
   const data = await sql`
       SELECT gifts FROM jsoned_mailings
       WHERE NAME = ${item}
@@ -116,11 +114,17 @@ export async function remove(formData: FormData) {
       WHERE name = ${item}
     `;
     console.log(`Element at index ${index} removed from ${item}.`);
+    
+    
   } catch (error) {
     console.error('Error removing element:', error);
   }
-    revalidatePath('/');
+  
+  revalidatePath('/');
     redirect(`/?item=${item}&number=${indexNum}&date=${date}&showGifts=true`);
+    
+    
+    
     
 }
 
@@ -216,6 +220,19 @@ export async function MailingsPush(formData : FormData) {
         
 }
 
+export async function fetchGiftsLength(item: string, query: string) {
+  try {
+    const data = await sql`
+      SELECT gifts FROM jsoned_mailings WHERE name = ${item}
+    `;
+    const gifts = data.rows[0].gifts;
+    const giftsLength = gifts ? gifts.length : 0;
+    return giftsLength;
+  } catch (error) {
+    console.error('Ошибка при запросе значения gifts:', error);
+    throw error;
+  }
+}
 
 
     export async function deleteMailing(formData: FormData) {
@@ -236,6 +253,7 @@ export async function MailingsPush(formData : FormData) {
     }
     revalidatePath('/');
     redirect('/');
+    
     
   }
 

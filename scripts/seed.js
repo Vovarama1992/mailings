@@ -205,11 +205,25 @@ async function limiter(client) {
     throw error; 
 }
 }
+async function fetchGiftsLength(client, item) {
+  try {
+    const data = await client.sql`
+      SELECT gifts FROM jsoned_mailings WHERE name = ${item}
+    `;
+    const gifts = data.rows[0].gifts;
+    const giftsLength = gifts ? gifts.length : 0;
+    console.log("gifts length: " + giftsLength);
+    return giftsLength;
+  } catch (error) {
+    console.error('Ошибка при запросе значения gifts:', error);
+    throw error;
+  }
+}
 
 async function main() {
   const client = await db.connect();
 
-  await limiter(client);
+  await fetchGiftsLength(client, "Weekly Wrap-Up");
   
 
   await client.end();

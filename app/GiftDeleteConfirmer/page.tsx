@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import Skeleton from '../Search';
 import { remove } from '../lib/fetchers';
 import { useEffect } from 'react';
+import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation';
 export default function ConfirmWrapper() {
     return (
@@ -28,16 +29,22 @@ export default function ConfirmWrapper() {
         const form = document.querySelector('form');
         const isConfirmed = window.confirm('Are you sure?');
         if (isConfirmed && form) {
-            form.requestSubmit()
             
-        } else redirect('/');
+            form.requestSubmit();
+            
+            
+            
+            
+            
+            
+        } else redirect(`/?item=${item}&showGifts=true`);
         
         return () => {
             
         };
     }, [item]);
     return (
-        <form action={remove}>
+    <form action={remove} hidden={true}>
             <input name='item' value={item} readOnly></input>
             <input name='number' value={number} readOnly></input>
             

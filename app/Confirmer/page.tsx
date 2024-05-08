@@ -27,7 +27,7 @@ export default function ConfirmWrapper() {
         if (isConfirmed && form) {
             form.requestSubmit()
             
-        } else redirect('/');
+        } else redirect(`/?item=${item}&showGifts=true`);
         
         return () => {
             
